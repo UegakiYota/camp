@@ -1,0 +1,16 @@
+<% layout('layouts/boilerplate') %>
+    <div>
+        <h1>キャンプ場の新規登録</h1>
+        <a href="/campground">キャンプ場一覧に戻る</a>
+    </div>
+    <form action="/campground" method="post">
+        <div>
+            <label for="title">タイトル</label>
+            <input type="text" id="title" name="campground[title]" required>
+        </div>
+        <div>
+            <label for="location">場所</label>
+            <input type="text" id="location" name="campground[location]" required>
+        </div>
+        <button>登録する</button>
+    </form>

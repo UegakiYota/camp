@@ -1,0 +1,16 @@
+<% layout('layouts/boilerplate') %>
+    <div>
+        <h1>キャンプ場の編集</h1>
+    </div>
+    <form action="/campground/<%= campground._id %>?_method=PUT" method="post">
+        <div>
+            <label for="title">タイトル</label>
+            <input type="text" id="title" name="campground[title]" value="<%= campground.title %>" required>
+        </div>
+        <div>
+            <label for="location">場所</label>
+            <input type="text" id="location" name="campground[location]" value="<%= campground.location %>" required>
+        </div>
+        <button>更新する</button>
+    </form>
+    <a href="/campground">キャンプ場一覧に戻る</a>
