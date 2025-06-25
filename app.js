@@ -3,6 +3,7 @@ const app = express();
 const path = require('path');
 const mongoose = require('mongoose');
 const ejsMate = require('ejs-mate');
+const catchAsync = require('./utils/catchAsync');
 const methodOverride = require('method-override');
 const Campground = require('./models/campground');
 
@@ -26,47 +27,43 @@ app.get('/', (req, res) => {
     res.render('home');
 });
 
-app.get('/campground', async (req, res) => {
+app.get('/campground', catchAsync(async (req, res) => {
     const campgrounds = await Campground.find({});
     res.render('campgrounds/index', { campgrounds });
-});
+}));
 
 app.get('/campground/new', (req, res) => {
     res.render('campgrounds/new');
 });
 
 
-app.get('/campground/:id', async (req, res) => {
+app.get('/campground/:id', catchAsync(async (req, res) => {
     const campground = await Campground.findById(req.params.id);
     res.render('campgrounds/show', { campground })
-});
+}));
 
-app.post('/campground', async (req, res, next) => {
-    try {
+app.post('/campground', catchAsync(async (req, res) => {
         const campground = new Campground(req.body.campground);
         await campground.save();
         res.redirect(`/campground/${campground._id}`);
-    } catch (e) {
-        next(e);
-    }
-});
+}));
 
-app.get('/campground/:id/edit', async (req, res) => {
+app.get('/campground/:id/edit', catchAsync(async (req, res) => {
     const campground = await Campground.findById(req.params.id);
     res.render('campgrounds/edit', { campground });
-});
+}));
 
-app.put('/campground/:id', async(req,res) => {
+app.put('/campground/:id', catchAsync(async(req,res) => {
     const { id } = req.params;
     const campground = await Campground.findByIdAndUpdate(id, { ...req.body.campground });
     res.redirect(`/campground/${campground._id}`);
-});
+}));
 
-app.delete('/campground/:id', async (req, res) => {
+app.delete('/campground/:id', catchAsync(async (req, res) => {
     const { id } = req.params;
     await Campground.findByIdAndDelete(id);
     res.redirect('/campground');
-});
+}));
 
 app.use((err, req, res, next) => {
     res.send('エラーが発生しました！');
