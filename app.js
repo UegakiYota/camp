@@ -68,17 +68,12 @@ app.delete('/campground/:id', catchAsync(async (req, res) => {
     res.redirect('/campground');
 }));
 
-// app.all(/.fly*$/, (req, res, next) => {
-//     next(new ExpressError('ページが見つかりません！', 404));
-// });
-
 app.all(/(.*)/, (req, res, next) => {
     next(new ExpressError('ページが見つかりません！', 404));
 });
 
 app.use((err, req, res, next) => {
     const { statusCode = 500, message = 'エラー！' } = err;
-    console.log(message);
     res.status(statusCode).send(message);
 });
 
