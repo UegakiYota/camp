@@ -3,6 +3,7 @@ const app = express();
 const path = require('path');
 const mongoose = require('mongoose');
 const ejsMate = require('ejs-mate');
+const campgroundSchema = require('./schemas');
 const catchAsync = require('./utils/catchAsync');
 const ExpressError = require('./utils/ExpressError');
 const methodOverride = require('method-override');
@@ -24,6 +25,16 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.urlencoded({extended: true}));
 app.use(methodOverride('_method'));
 
+const validateCampground = (res, req, next) => {
+    const { error } = campgroundSchema.campgroundSchema.validate(req.body);
+    if (error) {
+        const msg = error.details.map(detail => detail.message).join(',');
+        throw new ExpressError(msg, 400);
+    } else {
+        next();
+    }
+};
+
 app.get('/', (req, res) => {
     res.render('home');
 });
@@ -37,18 +48,15 @@ app.get('/campground/new', (req, res) => {
     res.render('campgrounds/new');
 });
 
-
 app.get('/campground/:id', catchAsync(async (req, res) => {
     const campground = await Campground.findById(req.params.id);
     res.render('campgrounds/show', { campground })
 }));
 
 app.post('/campground', catchAsync(async (req, res) => {
-    if (!req.body.campground) 
-        throw new ExpressError('キャンプ場のデータがありません！', 400);
-        const campground = new Campground(req.body.campground);
-        await campground.save();
-        res.redirect(`/campground/${campground._id}`);
+    const campground = new Campground(req.body.campground);
+    await campground.save();
+    res.redirect(`/campground/${campground._id}`);
 }));
 
 app.get('/campground/:id/edit', catchAsync(async (req, res) => {
@@ -56,7 +64,7 @@ app.get('/campground/:id/edit', catchAsync(async (req, res) => {
     res.render('campgrounds/edit', { campground });
 }));
 
-app.put('/campground/:id', catchAsync(async(req,res) => {
+app.put('/campground/:id', validateCampground, catchAsync(async (req, res) => {
     const { id } = req.params;
     const campground = await Campground.findByIdAndUpdate(id, { ...req.body.campground });
     res.redirect(`/campground/${campground._id}`);
@@ -73,8 +81,11 @@ app.all(/(.*)/, (req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
-    const { statusCode = 500, message = 'エラー！' } = err;
-    res.status(statusCode).send(message);
+    const { statusCode = 500} = err;
+    if (!err.message) {
+        err.message = '何か問題が発生しました！';
+    }
+    res.status(statusCode).render('error' , { err });
 });
 
 app.listen(3000, () => {
