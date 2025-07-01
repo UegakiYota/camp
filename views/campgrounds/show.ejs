@@ -22,14 +22,17 @@
                     2day<a href="/campground">キャンプ場一覧に戻る</a>
                 </div>
             </div>
-            <form action="/campground/<%= campground._id %>/reviews" method="post" class="mb-3">
+            <form action="/campground/<%= campground._id %>/reviews" method="post" class="mb-3 validated-form" novalidate>
                 <div class="mb-3">
                     <label class="form-label" for="rating">評価</label>
                     <input class="form-range" type="range" min="1" max="5" name="review[rating]" id="rating">
                 </div>
                 <div class="mb-3">
                     <label class="form-label" for="body">コメント</label>
-                    <textarea  class="form-control" name="review[body]" id="body" cols="30" rows="3"></textarea>
+                    <textarea  class="form-control" name="review[body]" id="body" cols="30" rows="3" required></textarea>
+                    <div class="valid-feedback">
+                        Looks good!
+                    </div>
                 </div>
                 <button class="btn btn-success">レビューを投稿</button>
             </form>
