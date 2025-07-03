@@ -4,6 +4,7 @@ const path = require('path');
 const mongoose = require('mongoose');
 const ejsMate = require('ejs-mate');
 const settion = require('express-session');
+const flash = require('connect-flash');
 const catchAsync = require('./utils/catchAsync');
 const ExpressError = require('./utils/ExpressError');
 const methodOverride = require('method-override');
@@ -38,7 +39,15 @@ const sessionConfig = {
         maxAge: 1000 * 60 * 60 * 24 * 7 // 7日間
     }
 };
+
 app.use(settion(sessionConfig));
+app.use(flash());
+// フラッシュのミドルウェアを作成
+app.use((req, res, next) => {
+    res.locals.success = req.flash('success');
+    res.locals.error = req.flash('error');
+    next();
+});
 
 app.get('/', (req, res) => {
     res.render('home');
