@@ -3,6 +3,7 @@ const app = express();
 const path = require('path');
 const mongoose = require('mongoose');
 const ejsMate = require('ejs-mate');
+const settion = require('express-session');
 const catchAsync = require('./utils/catchAsync');
 const ExpressError = require('./utils/ExpressError');
 const methodOverride = require('method-override');
@@ -27,6 +28,17 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.urlencoded({extended: true}));
 app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname, 'public')))
+
+const sessionConfig = {
+    secret: 'mesecret',
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+        httpOnly: true,
+        maxAge: 1000 * 60 * 60 * 24 * 7 // 7日間
+    }
+};
+app.use(settion(sessionConfig));
 
 app.get('/', (req, res) => {
     res.render('home');
