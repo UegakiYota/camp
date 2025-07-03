@@ -5,8 +5,8 @@ const ExpressError = require('../utils/ExpressError');
 const Campground = require('../models/campground');
 const { campgroundSchema } = require('../schemas');
 
-const validateCampground = (res, req, next) => {
-    const { error } = campgroundSchema.campgroundSchema.validate(req.body);
+const validateCampground = (req, res, next) => {
+    const { error } = campgroundSchema.validate(req.body);
     if (error) {
         const msg = error.details.map(detail => detail.message).join(',');
         throw new ExpressError(msg, 400);

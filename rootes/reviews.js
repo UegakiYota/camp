@@ -7,7 +7,7 @@ const { reviewSchema } = require('../schemas');
 const Review = require('../models/review');
 const { merge } = require('./campgrounds');
 
-const validateReview = (res, req, next) => {
+const validateReview = (req, res, next) => {
     const { error } = reviewSchema.validate(req.body);
     if (error) {
         const msg = error.details.map(detail => detail.message).join(',');
