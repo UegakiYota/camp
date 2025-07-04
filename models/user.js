@@ -10,6 +10,10 @@ const userSchema = new Schema({
     }
 });
 
-userSchema.plugin(passportLocalMongoose);//これでユーザスキーマにパスポートが適用される
+userSchema.plugin(passportLocalMongoose, {
+    errorMessages: {
+        UserExistsError: 'このユーザはすでに存在します。',
+    }
+});//これでユーザスキーマにパスポートが適用される
 
 module.exports = mongoose.model('User', userSchema);
